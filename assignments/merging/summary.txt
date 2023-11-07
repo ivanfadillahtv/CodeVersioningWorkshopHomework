@@ -1,0 +1,3 @@
+Merging on Git
+
+Merging in Git involves integrating changes from one branch into another, enabling the consolidation of different lines of development. 
