@@ -1,0 +1,4 @@
+Branching on Git
+
+Branching in Git allows for the creation of separate lines of development within a repository. 
+This feature enables developers to work on new features, bug fixes, or experiments without affecting the main codebase. 
