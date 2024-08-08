@@ -8,6 +8,6 @@ select
 'Mutation' AS datasource,
 1 AS order_id,
 21313 AS posting_date,
-"rm" as booking_product_type,
+"rmm" as booking_product_type,
   upper("success move") AS movement_messages
  

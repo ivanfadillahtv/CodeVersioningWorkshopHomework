@@ -1,5 +1,3 @@
-# For more information on how to configure this file, please see:
-# https://docs.getdbt.com/docs/profile
 config:
   partial_parse: False
   send_anonymous_usage_stats: False
@@ -10,8 +8,5 @@ default:
     bigquery:
       type: bigquery
       method: oauth
-      job_retries: 0
-      location: US
-      priority: interactive
-      project: "tvlk-data-bqmartpoc-dev"
-      dataset: "dev_ivanfadillah"
+      project: "test-project"
+      dataset: "dbt_default_dataset"
