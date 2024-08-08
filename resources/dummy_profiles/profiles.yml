@@ -1,0 +1,9 @@
+default:
+  target: dummy
+  outputs:
+    dummy:
+      type: bigquery
+      method: oauth
+      project: "your-gcp-project"
+      dataset: "dbt"
+      location: "US"
