@@ -1,6 +1,0 @@
-Merging on Git
-
-Merging in Git involves integrating changes from one branch into another, enabling the consolidation of different lines of development. 
-The process typically includes checking out the target branch, merging the source branch, resolving any conflicts, 
-committing the merge, and pushing the changes to the remote repository. Careful handling of the merging process is crucial, 
-especially in collaborative environments, to ensure smooth integration without conflicts.

@@ -4,4 +4,4 @@
 SELECT
     1 AS x,
   2 AS y,
-  31 AS z
+  3 AS z
