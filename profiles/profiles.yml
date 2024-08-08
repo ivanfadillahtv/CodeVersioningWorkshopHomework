@@ -1,0 +1,26 @@
+# For more information on how to configure this file, please see:
+# https://docs.getdbt.com/docs/profile
+config:
+  partial_parse: False
+  send_anonymous_usage_stats: False
+
+default:
+  target: bigquery
+  outputs:
+    bigquery:
+      type: bigquery
+      method: oauth
+      project: "test-project"
+      dataset: "dbt_default_dataset"
+    postgres:
+      type: postgres
+      host: "localhost"
+      user: "postgres"
+      password: "postgres"
+    redshift:
+      type: redshift
+    snowflake:
+      type: snowflake
+    spark:
+      type: spark
+      method: odbc
