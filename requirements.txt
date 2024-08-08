@@ -1,3 +1,1 @@
-dbt-bigquery>=1.5,<1.6
-dbt-core>=1.5,<1.6
-sqlparse>=0.5.0 # not directly required, pinned by Snyk to avoid a vulnerability
+dbt-bigquery==1.0.0
