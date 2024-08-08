@@ -1,0 +1,54 @@
+name: sqlfluff with reviewdog
+on:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      github_token:
+        description: "GITHUB_TOKEN"
+        required: false
+      github_base_ref:
+        description: "Pull request target branch name"
+        required: false
+      working-directory:
+        description: "working directory"
+        required: false
+        default: "${{ github.workspace }}"
+      extra_requirements_txt:
+        description: |
+          A path to your custom `requirements.txt` to install extra modules for your dbt adapters.
+          Please make sure not to contain `sqlfluff` and its dependent packages, because the action can be broken by the conflicts.
+        required: false
+        default: "${{ github.workspace }}/extra_requirements-1.6.txt"
+
+
+jobs:
+  test-check:
+    name: runner / sqlfluff (github-check)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dbt and BigQuery adapter
+        run: |
+          pip install dbt-core
+          pip install dbt-bigquery
+
+      - uses: yu-iskw/action-sqlfluff@v4
+        id: lint-sql
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
+          sqlfluff_version: "3.0.7"
+          sqlfluff_command: "fix" # Or "lint"
+          config: "${{ github.workspace }}/.sqlfluff"
+          paths: "${{ github.workspace }}/models"
+      - name: "Show outputs (Optional)"
+        shell: bash
+        run: |
+          echo '${{ steps.lint-sql.outputs.sqlfluff-results }}' | jq -r '.'
+          echo '${{ steps.lint-sql.outputs.sqlfluff-results-rdjson }}' | jq -r '.'
