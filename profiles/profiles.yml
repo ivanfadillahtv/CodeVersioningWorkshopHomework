@@ -10,17 +10,8 @@ default:
     bigquery:
       type: bigquery
       method: oauth
-      project: "test-project"
-      dataset: "dbt_default_dataset"
-    postgres:
-      type: postgres
-      host: "localhost"
-      user: "postgres"
-      password: "postgres"
-    redshift:
-      type: redshift
-    snowflake:
-      type: snowflake
-    spark:
-      type: spark
-      method: odbc
+      job_retries: 0
+      location: US
+      priority: interactive
+      project: "tvlk-data-bqmartpoc-dev"
+      dataset: "dev_ivanfadillah"
