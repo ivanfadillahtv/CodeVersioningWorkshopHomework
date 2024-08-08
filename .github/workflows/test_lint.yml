@@ -5,12 +5,10 @@ on:
     inputs:
       github_token:
         description: "GITHUB_TOKEN"
-        required: true
-        default: "${{ github.token }}"
+        required: false
       github_base_ref:
         description: "Pull request target branch name"
         required: false
-        default: "${{ github.base_ref }}"
       working-directory:
         description: "working directory"
         required: false
