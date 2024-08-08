@@ -1,54 +1,84 @@
-name: sqlfluff with reviewdog
+name: Test
 on:
   pull_request:
-  workflow_dispatch:
-    inputs:
-      github_token:
-        description: "GITHUB_TOKEN"
-        required: false
-      github_base_ref:
-        description: "Pull request target branch name"
-        required: false
-      working-directory:
-        description: "working directory"
-        required: false
-        default: "${{ github.workspace }}"
-      extra_requirements_txt:
-        description: |
-          A path to your custom `requirements.txt` to install extra modules for your dbt adapters.
-          Please make sure not to contain `sqlfluff` and its dependent packages, because the action can be broken by the conflicts.
-        required: false
-        default: "${{ github.workspace }}/extra_requirements-1.6.txt"
-
+    paths-ignore:
+      - "**/*.md"
 
 jobs:
-  test-check:
+  test-lint:
     name: runner / sqlfluff (github-check)
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sqlfluff:
+          - "3.0.7"
+        extra_requirements_txt:
+          - "testdata/test_failed_dbt/extra_requirements-1.6.txt"
+          - "testdata/test_failed_dbt/extra_requirements-1.7.txt"
+          - "testdata/test_failed_dbt/extra_requirements-1.8.txt"
+        config:
+          - ".sqlfluff.bigquery"
+          - ".sqlfluff.postgres"
+          - ".sqlfluff.redshift"
+          - ".sqlfluff.snowflake"
+          - ".sqlfluff.spark"
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-
-      - name: Install dbt and BigQuery adapter
-        run: |
-          pip install dbt-core
-          pip install dbt-bigquery
-
-      - uses: yu-iskw/action-sqlfluff@v4
+      - uses: ./
         id: lint-sql
         with:
           github_token: ${{ secrets.github_token }}
           reporter: github-pr-review
-          sqlfluff_version: "3.0.7"
-          sqlfluff_command: "fix" # Or "lint"
-          config: "${{ github.workspace }}/.sqlfluff"
-          paths: "${{ github.workspace }}/models"
-      - name: "Show outputs (Optional)"
+          sqlfluff_version: ${{ matrix.sqlfluff }}
+          sqlfluff_command: lint
+          templater: jinja
+          working-directory: "${{ github.workspace }}/testdata/test_failed_dbt"
+          config: "${{ github.workspace }}/testdata/test_failed_dbt/${{ matrix.config }}"
+          paths: "${{ github.workspace }}/testdata/test_failed_dbt/models"
+          extra_requirements_txt: "${{ github.workspace }}/${{ matrix.extra_requirements_txt }}"
+      - name: check the exit code
+        if: ${{ !success() }}
+        run: echo 'The previous step should fail' && exit 1
+      - name: "Test outputs"
+        if: always()
         shell: bash
         run: |
           echo '${{ steps.lint-sql.outputs.sqlfluff-results }}' | jq -r '.'
           echo '${{ steps.lint-sql.outputs.sqlfluff-results-rdjson }}' | jq -r '.'
+          echo '${{ steps.lint-sql.outputs.sqlfluff-exit-code }}'
+          echo '${{ steps.lint-sql.outputs.reviewdog-exit-code }}'
+
+  test-fix:
+    needs: ["test-lint"]
+    name: runner / sqlfluff (test-fix)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sqlfluff:
+          - "3.0.7"
+        extra_requirements_txt:
+          - "testdata/test_failed_dbt/extra_requirements-1.6.txt"
+          - "testdata/test_failed_dbt/extra_requirements-1.7.txt"
+          - "testdata/test_failed_dbt/extra_requirements-1.8.txt"
+        config:
+          - ".sqlfluff.bigquery"
+          - ".sqlfluff.postgres"
+          - ".sqlfluff.redshift"
+          - ".sqlfluff.snowflake"
+          - ".sqlfluff.spark"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        id: lint-sql
+        with:
+          github_token: ${{ secrets.github_token }}
+          reporter: github-pr-review
+          sqlfluff_version: ${{ matrix.sqlfluff }}
+          sqlfluff_command: fix
+          templater: jinja
+          working-directory: "${{ github.workspace }}/testdata/test_failed_dbt"
+          config: "${{ github.workspace }}/testdata/test_failed_dbt/${{ matrix.config }}"
+          paths: "${{ github.workspace }}/testdata/test_failed_dbt/models"
+          extra_requirements_txt: "${{ github.workspace }}/${{ matrix.extra_requirements_txt }}"
