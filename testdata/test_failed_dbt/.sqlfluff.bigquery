@@ -1,5 +1,4 @@
 [sqlfluff]
-templater = dbt
 # verbose is an integer (0-2) indicating the level of log output
 verbose = 0
 # Turn off color formatting of output
