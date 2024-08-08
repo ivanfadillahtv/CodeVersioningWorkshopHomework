@@ -1,0 +1,5 @@
+dbt-core==1.5.1
+dbt-bigquery==1.5.2
+pytz==2015.7
+sqlfluff==${SQLFLUFF_VERSION}
+sqlfluff-templater-dbt==${SQLFLUFF_VERSION}
