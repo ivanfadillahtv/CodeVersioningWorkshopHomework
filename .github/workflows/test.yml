@@ -31,3 +31,9 @@ jobs:
           config: "${{ github.workspace }}/testdata/test_failed_dbt/${{ matrix.config }}"
           paths: "${{ github.workspace }}/testdata/test_failed_dbt/models"
           extra_requirements_txt: "${{ github.workspace }}/${{ matrix.extra_requirements_txt }}"
+          
+  protoc-gen-go:
+    runs-on: ubuntu-latest
+    if: github.event.review.state == 'APPROVED'
+    steps:
+       - run: echo "🎉 The approved was automatically triggered by a ${{ github.event_name }} event."
