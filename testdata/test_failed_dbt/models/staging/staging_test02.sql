@@ -1,7 +1,7 @@
 {{ config(enabled=true) }}
 
 
-select
-  1 as x,
-   2 as y,
-  3 as z
+SELECT
+  1 AS x,
+   2 AS y,
+  3 AS z
